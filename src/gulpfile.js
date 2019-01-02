@@ -8,6 +8,7 @@ var url = require("url");
 var clean = require("gulp-clean-css");
 var uglif = require("gulp-uglify");
 var babel = require("gulp-babel");
+var html = require("gulp-htmlmin");
 
 // console.log(sass);
 gulp.task("sass", function() {
@@ -63,3 +64,11 @@ gulp.task("jsb", function() {
         .pipe(uglif())
         .pipe(gulp.dest("dist/js/libs/"))
 });
+gulp.task("html", function() {
+    return gulp.src("srcs/*.html")
+        .pipe(html({
+            collapseWhitespace: true
+        }))
+        .pipe(gulp.dest("dist/"))
+});
+gulp.task("build", gulp.parallel("clean", "jsa", "jsb", "html"));
