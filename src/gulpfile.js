@@ -4,6 +4,10 @@ var webserver = require("gulp-webserver");
 var fs = require("fs");
 var path = require("path");
 var url = require("url");
+//压缩
+var clean = require("gulp-clean-css");
+var uglif = require("gulp-uglify");
+var babel = require("gulp-babel");
 
 // console.log(sass);
 gulp.task("sass", function() {
@@ -23,9 +27,39 @@ gulp.task("webserver", function() {
             livereload: true,
             middleware: function(req, res) {
                 var pathname = url.parse(req.url).pathname;
-                // if(){
-
-                // }
+                if (pathname === "/favicon.ico") {
+                    return res.end();
+                }
+                if (pathname === "/api/list") {
+                    res.end(JSON.stringify({ code: 1, data: "成功" }))
+                } else {
+                    pathname = pathname === "/" ? "index.html" : pathname;
+                    res.end(fs.readFileSync(path.join(__dirname, "srcs", pathname)));
+                }
             }
         }))
+});
+gulp.task("dev", gulp.parallel("wacth", "webserver"));
+
+//打包到dist下面
+
+//压缩Css
+gulp.task("clean", function() {
+    return gulp.src("srcs/css/*.css")
+        .pipe(clean())
+        .pipe(gulp.dest("./dist/css/"))
+});
+//压缩js
+gulp.task("jsa", function() {
+    return gulp.src("srcs/js/index.js")
+        .pipe(babel({
+            presets: ['@babel/env']
+        }))
+        .pipe(uglif())
+        .pipe(gulp.dest("dist/js/"))
+});
+gulp.task("jsb", function() {
+    return gulp.src("srcs/js/libs/*js")
+        .pipe(uglif())
+        .pipe(gulp.dest("dist/js/libs/"))
 });
