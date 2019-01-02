@@ -12,7 +12,7 @@ var html = require("gulp-htmlmin");
 
 // console.log(sass);
 gulp.task("sass", function() {
-    return gulp.src("srcs/scss/*.scss")
+    return gulp.src("srcs/scss/index.scss")
         .pipe(sass())
         .pipe(gulp.dest("srcs/css/"))
 });
@@ -40,7 +40,7 @@ gulp.task("webserver", function() {
             }
         }))
 });
-gulp.task("dev", gulp.parallel("wacth", "webserver"));
+gulp.task("dev", gulp.parallel("sass", "wacth", "webserver"));
 
 //打包到dist下面
 
